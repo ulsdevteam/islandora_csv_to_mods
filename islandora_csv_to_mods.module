@@ -1,0 +1,60 @@
+<?php
+
+// Permissions.
+define('ISLANDORA_CSV_TO_MODS', 'csv to mods permission');
+define('ISLANDORA_CSV_TO_MODS_UPDATE_OBJECTS', 'csv to mods update objects');
+
+/**
+ * Implements hook_menu().
+ */
+function islandora_csv_to_mods_menu() {
+  return array(
+    'admin/islandora/csv_to_mods' => array(
+      'title' => 'Islandora CSV to MODS Utility',
+      'description' => 'Settings for the Islandora CSV to MODS Utility module.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('islandora_csv_to_mods_admin_form'),
+      'access arguments' => array(ISLANDORA_CSV_TO_MODS),
+      'file' => 'includes/admin.form.inc',
+    ),
+    'islandora/csv_to_mods/import_csv' => array(
+      'title' => t('CSV to MODS'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('islandora_csv_to_mods_import_csv_form'),
+      'type' => MENU_CALLBACK,
+      'file' => 'includes/import_csv.form.inc',
+      'access arguments' => array(ISLANDORA_CSV_TO_MODS),
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function islandora_csv_to_mods_permission() {
+  return array(
+    ISLANDORA_CSV_TO_MODS => array(
+      'title' => t('Use the CSV to MODS tool'),
+      'description' => t('User can create MODS from CSV upload.'),
+    ),
+    ISLANDORA_CSV_TO_MODS_UPDATE_OBJECTS => array(
+      'title' => t('Update Islandora objects with MODS created from CSV upload.'),
+      'description' => t('User can update Islandora objects with MODS created from CSV file upload.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_presprocess_theme().
+ *
+ * This code will remove the sidebar and must check to see whether or not the path is on a user page.
+ */
+function islandora_csv_to_mods_preprocess_page(&$vars) {
+  $item = menu_get_item();
+  if (is_array($item)) {
+    if (strstr($item['path'], 'islandora/csv_to_mods') <> '') {
+      $path = drupal_get_path('module', 'islandora_csv_to_mods');
+      drupal_add_css($path . '/css/csv_to_mods.css');
+    }
+  }
+}

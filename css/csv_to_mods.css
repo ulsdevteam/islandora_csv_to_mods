@@ -1,0 +1,50 @@
+.csv_report_table {
+    font-size: 0.825em;
+    font-family: Andale Mono, monospace;
+}
+
+div.bad, tr.bad {
+    background-color: #faa !important;
+    color: #900 !important;
+}
+
+div.good, tr.good {
+    background-color: #bfb !important;
+}
+
+a.bad {
+    color: #c33;
+}
+
+.good {
+    color: green;
+}
+
+.bad {
+    color: red;
+}
+
+.wide_200 {
+    width: 200px;
+}
+
+.fl {
+    float: left;
+}
+
+.heading {
+    font-weight: 600;
+    font-size: 1.15em;
+}
+
+.found {
+    color: #0a0;
+}
+
+.not-found {
+    color: #c00;
+}
+
+.mods_box {
+    border:1px solid #222;
+}

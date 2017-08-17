@@ -1,0 +1,7 @@
+name = Islandora CSV to MODS Utility
+package = Islandora Tools
+description = To create MODS from CSV upload and potentially update the related Islandora objects.
+version = 7.x
+core = 7.x
+dependencies[] = islandora
+configure = admin/islandora/csv_to_mods
