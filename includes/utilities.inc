@@ -55,19 +55,6 @@ function islandora_csv_to_mods_validate_csv($filename) {
   }
 
   foreach ($file_rows as $k => $row) {
-    /*
-    // If there is a filename_index, check that the file exists.
-    if (!$filename_index === FALSE) {
-      $row_filename = $obj_files_path . '/' . $row[$filename_index];
-      if (!file_exists($row_filename)) {
-        $validation_success = FALSE;
-        drupal_set_message(t('There is a filename referenced that does not exist on ' .
-          'the file system.  "' . $row[$filename_index] . '" on row #' . $k .
-          '.  The file must be stored at "' . $obj_files_path . '/".  Please upload ' .
-          'fix this issue to be able to ingest this batch.'), 'error');
-      }
-    }
-    */
     // If there is a normalized_date in the header, check this row's date value
     if (!($date_index === FALSE)) {
       $normalized_date = $row[$date_index];
@@ -180,10 +167,10 @@ function islandora_csv_to_mods_make_custom_csv_dates($short_date, $suppress_disp
         if (!$suppress_display_messages) {
           drupal_set_message('bad date format for date value of "' . $short_date . '".', 'error');
         }
-        return '';
+        return array('','');
       }
       else {
-        return '';
+        return array('','');
       }
     }
   }
@@ -196,7 +183,7 @@ function islandora_csv_to_mods_make_custom_csv_dates($short_date, $suppress_disp
       if (!$suppress_display_messages) {
         drupal_set_message('bad date format for date value of "' . $short_date . '".', 'error');
       }
-      return '';
+      return array('','');
     }
   }
   $timestamp = strtotime($short_date);
@@ -210,7 +197,6 @@ function islandora_csv_to_mods_make_custom_csv_dates($short_date, $suppress_disp
 function islandora_csv_to_mods_fix_if_csv_date_approximate($headers, &$row) {
   $normalized_date_qualifier_index = array_search('normalized_date_qualifier', $headers);
   $date_index = array_search('date', $headers);
-  // echo "<h3>normalized_date_qualifier_index = " . $normalized_date_qualifier_index . ", date_index = " . $date_index ."</h3>";
   if ($normalized_date_qualifier_index && isset($row[$normalized_date_qualifier_index])) {
     if ($row[$normalized_date_qualifier_index] == 'yes' || $row[$normalized_date_qualifier_index] == 'approximate') {
       $row[$date_index] = 'ca. ' . $row[$date_index];

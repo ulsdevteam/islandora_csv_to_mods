@@ -27,7 +27,8 @@ function islandora_csv_to_mods_admin_form() {
     'namespace' => array(
       '#type' => 'textfield',
       '#title' => t('Object Namespace'),
-      '#description' => t('The namespace to use for CSV import to convert identifier into.  Do not include the colon character.'),
+      '#description' => t('The namespace to use for CSV import to convert identifier into.  Do not include the colon character.<br>' .
+              '<em>If the `identifier` column contains a full PID value, the namespace specified by that value would override this namespace setting</em>.'),
       '#default_value' => variable_get('islandora_csv_to_mods_namespace'),
     ),
     'submit' => array(

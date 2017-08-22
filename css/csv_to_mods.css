@@ -47,4 +47,10 @@ a.bad {
 
 .mods_box {
     border:1px solid #222;
+    padding: 0px 4px 0px 10px;
+}
+
+.mods_box h3 {
+    font-size: 18px;
+    margin-top: 8px;
 }
