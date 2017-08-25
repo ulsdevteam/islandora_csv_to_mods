@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Administration forms and submit handling for Islandora CSV to MODS Utility module.
+ * Administration forms and submit handling for Islandora CSV to MODS Utility.
  */
 
 /**
@@ -27,8 +27,7 @@ function islandora_csv_to_mods_admin_form() {
     'namespace' => array(
       '#type' => 'textfield',
       '#title' => t('Object Namespace'),
-      '#description' => t('The namespace to use for CSV import to convert identifier into.  Do not include the colon character.<br>' .
-              '<em>If the `identifier` column contains a full PID value, the namespace specified by that value would override this namespace setting</em>.'),
+      '#description' => t('The namespace to use for CSV import to convert identifier into.  Do not include the colon character.  If the `identifier` column contains a full PID value, the namespace specified by that value would override this namespace setting.'),
       '#default_value' => variable_get('islandora_csv_to_mods_namespace'),
     ),
     'submit' => array(
@@ -40,14 +39,14 @@ function islandora_csv_to_mods_admin_form() {
       '#title' => 'Islandora CSV to MODS Utility',
       'about' => array(
         '#type' => 'item',
-        '#markup' => l('Import CSV', 'islandora/csv_to_mods/import_csv') . ' - upload CSV for MODS updates.',
+        '#markup' => l(t('Import CSV'), 'islandora/csv_to_mods/import_csv') . ' - upload CSV for MODS updates.',
       ),
       'csv_to_mods_mappings' => array(
         '#type' => 'item',
-        '#markup' => '<h3>Supported CSV fields</h3>' . 
-          '<div><div class="fl heading wide_200">CSV heading</div><div class="fl heading">MODS node (xpath)</div></div><br>' .
-          implode("<br>", $csv_to_mods_mapping_lines),
-      )
+        '#markup' => '<h3>Supported CSV fields</h3>' .
+        '<div><div class="fl heading wide_200">CSV heading</div><div class="fl heading">MODS node (xpath)</div></div><br>' .
+        implode("<br>", $csv_to_mods_mapping_lines),
+      ),
     ),
   );
   return $form;

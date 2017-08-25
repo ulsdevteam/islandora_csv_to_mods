@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * @file
+ * Defines all the hooks this module implements.
+ *
+ * islandora_csv_to_mods.module: defines paths as entry points and acts
+ *  as a hub for dispatching tasks to other modules.
+ *
+ * This file is a utility module for use with Islandora.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with the program.  If not, see <http ://www.gnu.org/licenses/>.
+ */
+
 // Permissions.
 define('ISLANDORA_CSV_TO_MODS', 'csv to mods permission');
 define('ISLANDORA_CSV_TO_MODS_UPDATE_OBJECTS', 'csv to mods update objects');
@@ -18,7 +41,7 @@ function islandora_csv_to_mods_menu() {
       'file' => 'includes/admin.form.inc',
     ),
     'islandora/csv_to_mods/import_csv' => array(
-      'title' => t('CSV to MODS'),
+      'title' => 'CSV to MODS',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('islandora_csv_to_mods_import_csv_form'),
       'type' => MENU_CALLBACK,
@@ -26,14 +49,14 @@ function islandora_csv_to_mods_menu() {
       'access arguments' => array(ISLANDORA_CSV_TO_MODS),
     ),
     'islandora/csv_to_mods/update_objects/%/%' => array(
-      'title' => t('Update Object MODS'),
+      'title' => 'Update Object MODS',
       'page callback' => 'islandora_csv_to_mods_update_objects',
       'page arguments' => array(3, 4),
       'file' => 'includes/import_csv.form.inc',
       'access arguments' => array(ISLANDORA_CSV_TO_MODS_UPDATE_OBJECTS),
     ),
     'islandora/csv_to_mods/download_mods/%/%' => array(
-      'title' => t('Download MODS'),
+      'title' => 'Download MODS',
       'page callback' => 'islandora_csv_to_mods_download_mods',
       'page arguments' => array(3, 4),
       'file' => 'includes/import_csv.form.inc',
@@ -61,7 +84,8 @@ function islandora_csv_to_mods_permission() {
 /**
  * Implements hook_presprocess_theme().
  *
- * This code will remove the sidebar and must check to see whether or not the path is on a user page.
+ * This code will remove the sidebar and must check to see whether or not the
+ * path is on a user page.
  */
 function islandora_csv_to_mods_preprocess_page(&$vars) {
   $item = menu_get_item();
