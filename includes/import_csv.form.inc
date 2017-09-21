@@ -551,7 +551,7 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
     $row_counter++;
 
     // Do we need to zip the multiple MODS and return the zip?
-    if (is_null($specific_row)) {
+    if ($filename && is_null($specific_row)) {
       $file_pathinfo = pathinfo($filename);
       chdir($file_pathinfo['dirname']);
       $zip->addFile($file_pathinfo['filename'] . '.' . $file_pathinfo['extension']);

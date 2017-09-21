@@ -298,6 +298,7 @@ function islandora_csv_to_mods_get_csv_header_xpath_mappings() {
   // TODO:  add /mods/copyright/accessCondition/general.note
   return array(
     'genre'                     => '/mods:mods/mods:genre',
+    'abstract'                  => '/mods:mods/mods:abstract',
     'description'               => '/mods:mods/mods:abstract',
     'type_of_resource'          => '/mods:mods/mods:typeOfResource',
     'gift_of'                   => '/mods:mods/mods:note[@type="donor"]',
@@ -333,6 +334,13 @@ function islandora_csv_to_mods_get_csv_header_xpath_mappings() {
     'normalized_date'           => '/mods:mods/mods:originInfo/mods:dateCreated[@encoding="iso8601" @keyDate="yes"]',
     'rights_holder'             => '/mods:mods/mods:accessCondition/copyrightMD:copyright/copyrightMD:rights.holder/copyrightMD:name',
     'normalized_date_qualifier' => '/mods:mods/mods:originInfo/mods:dateCreated[@qualifier="approximate" @encoding="iso8601" @keyDate="yes"]',
+    // NEW fields for Oral Histories.
+    'interviewee'               => '',
+    'interviewer'               => '',
+    // Same as parent_identifier.
+    'parent_id'                 => '',
+    // Same as parent_id.
+    'parent_identifier'         => '',
     // These field values are not represented in a MODS file, but will appear
     // in the CSV file.
     'batch' => '',
@@ -340,5 +348,8 @@ function islandora_csv_to_mods_get_csv_header_xpath_mappings() {
     'file_name' => '',
     'filename' => '',
     'location' => '',
+    // NEW fields that will appear in the CSV file, but not to be transformed to
+    // a MODS node.
+    'path_to_master_wav' => '',
   );
 }
