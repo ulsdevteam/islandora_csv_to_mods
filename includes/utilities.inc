@@ -143,11 +143,12 @@ function islandora_csv_to_mods_csv_file_as_array($csv_file) {
         }
         // Subtract the header row.
         $data_rows = $row - 1;
-        drupal_set_message(t('There are @data_rows rows in the CSV file "@csv_file".  Only the first @max_csv_rows_for_display rows are displayed.'),
+        drupal_set_message(t('There are @data_rows rows in the CSV file "@csv_file".'),
                 array(
                   '@data_rows' => check_plain(number_format($data_rows)),
                   '@csv_file' => check_plain($csv_file),
-                  '@max_csv_rows_for_display' => check_plain($max_csv_rows_for_display)), 'warning');
+                ), 
+                'warning');
       }
       catch (Exception $e) {
         throw new Exception('The file "' . $csv_file . '" could not be parsed as a CSV.');

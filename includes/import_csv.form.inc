@@ -403,6 +403,9 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
 
   // Get the headers of the file.
   $headers = fgetcsv($input_file);
+  foreach ($headers as $i => $header) {
+    $headers[$i] = trim($header);
+  }
   if ((array_search('identifier', $headers) === FALSE) and (array_search('Identifier', $headers) === FALSE)) {
     return FALSE;
   }
