@@ -1,5 +1,7 @@
 <?php
 
+set_time_limit(0);
+
 /**
  * @file
  * Utilities functions for Islandora CSV to MODS Utility module.
