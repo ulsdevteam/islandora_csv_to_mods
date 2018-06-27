@@ -1,11 +1,11 @@
 <?php
 
-set_time_limit(0);
-
 /**
  * @file
  * Utilities functions for Islandora CSV to MODS Utility module.
  */
+
+set_time_limit(0);
 
 /**
  * Perform transform to convert the <sheet> into <mods>.
@@ -133,6 +133,9 @@ function islandora_csv_to_mods_csv_file_as_array($csv_file) {
         while (($data = fgetcsv($handle)) !== FALSE) {
           $row++;
           if ($row > 1) {
+            foreach ($data as $i => $v) {
+              $data[$i] = htmlspecialchars(trim($v), ENT_QUOTES);
+            }
             $file_rows[] = $data;
           }
           else {
@@ -149,7 +152,7 @@ function islandora_csv_to_mods_csv_file_as_array($csv_file) {
                 array(
                   '@data_rows' => check_plain(number_format($data_rows)),
                   '@csv_file' => check_plain($csv_file),
-                ), 
+                ),
                 'warning');
       }
       catch (Exception $e) {

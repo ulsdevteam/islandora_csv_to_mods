@@ -438,6 +438,11 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
     if (!is_null($specific_row) && ($row_counter == $specific_row) || is_null($specific_row)) {
       // First, scan the entire row to get the identifier and file_name value.
       $identifier = '';
+
+      foreach ($row as $i => $v) {
+        $row[$i] = htmlspecialchars(trim($v), ENT_QUOTES);
+      }
+
       $rowcopy = $row;
       // Set a default filename for this row's MODS... it should be overridden
       // by the row `identifier` reference.
@@ -522,6 +527,7 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
 
       $root = $doc->appendChild($root);
       $child = NULL;
+
       foreach ($headers as $i => $header) {
         if (array_key_exists($header, $csv_header_xpath_mappings)) {
           if (is_array($rowcopy) && array_key_exists($i, $rowcopy) && $rowcopy[$i]) {
@@ -544,7 +550,6 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
 
       // Transform the simple "sheet" xml into MODS.
       $filename = islandora_csv_to_mods_XMLtoMODS($working_directory . '/' . $output_filename, $identifier);
-error_log('MODS filename = ' . $filename);
       $mods_xml = file_get_contents($filename);
       $mods_xmls[] = $mods_xml;
       $markup .= "<blockquote><pre>" . htmlspecialchars($mods_xml) . "</pre></blockquote>";
@@ -618,8 +623,6 @@ function islandora_csv_to_mods_update_objects($row_index, $base64_temp_csv_filen
           $mods_filename = islandora_csv_to_mods_get_mods_row_filename($tmp_csv_filename, $this_mods_row_index);
           $object_pid = str_replace(array("_MODS.xml", $ns_replace), array("", $ns_replace_with), $mods_filename);
           // Load this Islandora object.
-error_log($object_id);
-error_log('MODS = ' . $mods_xml);
           $islandora_object = islandora_object_load($object_pid);
           if (is_object($islandora_object)) {
             if (isset($islandora_object['MODS'])) {
