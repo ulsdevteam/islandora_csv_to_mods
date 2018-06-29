@@ -533,7 +533,8 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
           if (is_array($rowcopy) && array_key_exists($i, $rowcopy) && $rowcopy[$i]) {
             $child = $doc->createElement($header);
             $child = $root->appendChild($child);
-            $value = $doc->createTextNode($rowcopy[$i]);
+            echo $rowcopy[$i] . "<hr>";
+            $value = $doc->createTextNode(str_replace("&amp;", "&", $rowcopy[$i]));
             $value = $child->appendChild($value);
           }
         }
@@ -544,7 +545,6 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
 
       $strxml = $doc->saveXML();
       $handle = fopen($tmp_mods_filename, "w");
-
       fwrite($handle, $strxml);
       fclose($handle);
 
