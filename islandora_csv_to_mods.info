@@ -4,4 +4,4 @@ description = To create MODS from CSV upload and potentially update the related 
 version = 7.x
 core = 7.x
 dependencies[] = islandora
-configure = admin/islandora/csv_to_mods
+configure = admin/islandora/tools/csv_to_mods
