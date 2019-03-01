@@ -35,9 +35,11 @@
 
                 <xsl:if test="count(subject_local) &gt; 0">
                         <mods:subject authority="local">
+                           <mods:topic>
                                 <xsl:for-each select="subject_local">
                                         <xsl:value-of select="." />
                                 </xsl:for-each>
+                           </mods:topic>
                         </mods:subject>
                 </xsl:if>
 
