@@ -100,7 +100,7 @@ function islandora_csv_to_mods_validate_csv($filename) {
       $check = islandora_csv_to_mods_make_custom_csv_dates($row[$date_index], TRUE);
       if ($check == '') {
         $validation_success = FALSE;
-        drupal_set_message(t('There is a bad date value for "normalized_date" = "@row_normalized_date" on row #@rownum.  Please upload the CSV after fixing this value.'), array('@row_normalized_date' => check_plain($row[$date_index]), '@rownum' => check_plain($k)), 'error');
+        drupal_set_message(t('There is a bad date value for "normalized_date" = "@row_normalized_date" on row #@rownum.  Please upload the CSV after fixing this value.', array('@row_normalized_date' => check_plain($row[$date_index]), '@rownum' => check_plain($k))), 'error');
       }
     }
   }
@@ -148,11 +148,11 @@ function islandora_csv_to_mods_csv_file_as_array($csv_file) {
         }
         // Subtract the header row.
         $data_rows = $row - 1;
-        drupal_set_message(t('There are @data_rows rows in the CSV file "@csv_file".'),
+        drupal_set_message(t('There are @data_rows rows in the CSV file "@csv_file".',
                 array(
                   '@data_rows' => check_plain(number_format($data_rows)),
                   '@csv_file' => check_plain($csv_file),
-                ),
+                )),
                 'warning');
       }
       catch (Exception $e) {
@@ -233,7 +233,7 @@ function islandora_csv_to_mods_make_custom_csv_dates($short_date, $suppress_disp
     elseif ($short_date_length <> 8 && !$from_date) {
       if ($short_date <> '') {
         if (!$suppress_display_messages) {
-          drupal_set_message(t('Bad date format for date value of "@short_date".'), array('@short_date' => check_plain($short_date)), 'error');
+          drupal_set_message(t('Bad date format for date value of "@short_date".', array('@short_date' => check_plain($short_date))), 'error');
         }
         return array('', '');
       }
@@ -249,7 +249,7 @@ function islandora_csv_to_mods_make_custom_csv_dates($short_date, $suppress_disp
     }
     elseif ($short_date_length <> 10 && !$from_date) {
       if (!$suppress_display_messages) {
-        drupal_set_message(t('Bad date format for date value of "@short_date".'), array('@short_date' => check_plain($short_date)), 'error');
+        drupal_set_message(t('Bad date format for date value of "@short_date".', array('@short_date' => check_plain($short_date))), 'error');
       }
       return array('', '');
     }
