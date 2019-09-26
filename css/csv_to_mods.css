@@ -32,6 +32,10 @@ a.bad {
     float: left;
 }
 
+.fl_break {
+    clear: both;
+}
+
 .heading {
     font-weight: 600;
     font-size: 1.15em;
