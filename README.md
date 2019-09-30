@@ -8,6 +8,14 @@ To create MODS from CSV upload and potentially update the related Islandora obje
 ### Installing
 After installing the module, the `admin/islandora/tools/csv_to_mods` configuration will allow a namespace to be defined.  This value defaults to "islandora" and is not needed when the identifier column in the CSV file actually contains full PID values such as "islandora:192".
 
+# Configuration
+**Object Namespace** this value specifies the fedora namespace for the objects.  This makes up any objects full PID value, for example an object with "islandora:455" has a namespace of "islandora".
+
+**SCHEMA CHECKING** when the *Perform schema test on import or transform to object MODS.* checkbox is checked, this will perform a schema test against the selected MODS schema.
+
+**MODS to DC XSL Transform** creates DC derivatives for objects after updating their MODS.
+
+
 ## CSV Specification
 The CSV file should adhere to [RFC 4180 "Common Format and MIME Type for Comma-Separated Values"](https://tools.ietf.org/html/rfc4180).
 
