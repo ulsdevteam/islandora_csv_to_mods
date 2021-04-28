@@ -46,7 +46,7 @@
                 <xsl:if test="count(subject|scale) &gt; 0">
                         <xsl:for-each select="subject">
                         <!-- split the value into separate nodes if needed -->
-                        <xsl:call-template name="split_subjects">
+                        <xsl:call-template name="split_semicolon">
                                 <xsl:with-param name="text" select="."/>
                         </xsl:call-template>
 
@@ -151,14 +151,16 @@
 
                 <xsl:if test="count(creator) &gt; 0">
                         <xsl:for-each select="creator">
+                          <xsl:call-template name="split_semicolon">
                                 <mods:name>
                                         <mods:namePart>
-                                                <xsl:value-of select="." />
+                                          <xsl:with-param name="text" select="."/>
                                         </mods:namePart>
                                         <mods:role>
                                                 <mods:roleTerm type="text">creator</mods:roleTerm>
                                         </mods:role>
                                 </mods:name>
+                          </xsl:call-template>
                         </xsl:for-each>
                 </xsl:if>
 
@@ -221,9 +223,11 @@
                 </xsl:if>
 
                 <xsl:if test="count(genre) &gt; 0">
-                        <mods:genre>
-                                <xsl:value-of select="genre" />
-                        </mods:genre>
+                  <xsl:for-each select="genre">
+                    <xsl:call-template name="split_semicolon">
+                      <xsl:with-param name="text" select="."/>
+                    </xsl:call-template>                            
+                  </xsl:for-each>
                 </xsl:if>
 
                 <xsl:if test="count(identifier) &gt; 0">
@@ -312,7 +316,7 @@
         </xsl:template>
 
         <!-- when ";", this means a new subject/topic.  when contains double dash, split into new /topic nodes. -->
-        <xsl:template match="text/text()" name="split_subjects">
+        <xsl:template match="text/text()" name="split_semicolon">
                 <xsl:param name="text" select="."/>
                 <xsl:param name="separator" select="';'"/>
                 <xsl:choose>
@@ -324,10 +328,10 @@
                                 </mods:subject>
                         </xsl:when>
                         <xsl:otherwise>
-                                <xsl:call-template name="split_subjects">
+                                <xsl:call-template name="split_semicolon">
                                         <xsl:with-param name="text" select="normalize-space(substring-before($text, $separator))"/>
                                 </xsl:call-template>
-                                <xsl:call-template name="split_subjects">
+                                <xsl:call-template name="split_semicolon">
                                         <xsl:with-param name="text" select="normalize-space(substring-after($text, $separator))"/>
                                 </xsl:call-template>
                         </xsl:otherwise>
