@@ -45,11 +45,25 @@
 
                 <xsl:if test="count(subject|scale) &gt; 0">
                         <xsl:for-each select="subject">
+<<<<<<< HEAD
                         	<!-- split the value into separate nodes if needed -->
                         	<xsl:call-template name="split_semicolon">
                                 	<xsl:with-param name="text" select="."/>
 					<xsl:with-param name="parent" select=".."/>
                         	</xsl:call-template>
+=======
+                        <!-- split the value into separate nodes if needed -->
+                        <xsl:call-template name="split_semicolon">
+                                <xsl:with-param name="text" select="."/>
+                        </xsl:call-template>
+                        
+                        <mods:subject>
+                                <xsl:call-template name="split_topics">
+                                        <xsl:with-param name="text" select="normalize-space($text)"/>
+                                </xsl:call-template>
+                        </mods:subject>
+
+>>>>>>> 37b03954623eba24ce0fdfadc30de33794f222b8
                         </xsl:for-each>
                         <xsl:for-each select="scale">
                                 <mods:subject>
@@ -150,11 +164,29 @@
                 </xsl:if>
 
                 <xsl:if test="count(creator) &gt; 0">
+<<<<<<< HEAD
                 	<xsl:for-each select="creator">
                         	<xsl:call-template name="split_semicolon">
                         		<xsl:with-param name="text" select="."/>
 					<xsl:with-param name="parent" select=".."/>
                        		</xsl:call-template>
+=======
+                        <xsl:for-each select="creator">
+                          <xsl:call-template name="split_semicolon">
+                            <xsl:with-param name="text" select="."/>
+                          </xsl:call-template>
+                          
+                          
+                          <mods:name>
+                            <mods:namePart>
+                              <xsl:value-of select="normalize-space($text)"/>
+                            </mods:namePart>
+                            <mods:role>
+                              <mods:roleTerm type="text">creator</mods:roleTerm>
+                            </mods:role>
+                          </mods:name>
+                          
+>>>>>>> 37b03954623eba24ce0fdfadc30de33794f222b8
                         </xsl:for-each>
                 </xsl:if>
 
@@ -217,13 +249,25 @@
                 </xsl:if>
 
                 <xsl:if test="count(genre) &gt; 0">
+<<<<<<< HEAD
                 	<xsl:for-each select="genre">
                 		<xsl:call-template name="split_semicolon">
                 			<xsl:with-param name="text" select="."/>
 					<xsl:with-param name="parent" select=".."/>
                 		</xsl:call-template>              
                 	</xsl:for-each>
+=======
+                  <xsl:for-each select="genre">
+                    <xsl:call-template name="split_semicolon">
+                      <xsl:with-param name="text" select="."/>
+                    </xsl:call-template>                            
+                  </xsl:for-each>
+>>>>>>> 37b03954623eba24ce0fdfadc30de33794f222b8
                 </xsl:if>
+
+                <mods:genre>
+                  <xsl:value-of select="normalize-space($text)"/>
+                </mods:genre>
 
                 <xsl:if test="count(identifier) &gt; 0">
                         <mods:identifier type="pitt">
