@@ -45,11 +45,11 @@
 
                 <xsl:if test="count(subject|scale) &gt; 0">
                         <xsl:for-each select="subject">
-                        <!-- split the value into separate nodes if needed -->
-                        <xsl:call-template name="split_subjects">
-                                <xsl:with-param name="text" select="."/>
-                        </xsl:call-template>
-
+                        	<!-- split the value into separate nodes if needed -->
+                        	<xsl:call-template name="split_semicolon">
+                                	<xsl:with-param name="text" select="."/>
+					<xsl:with-param name="parent" select=".."/>
+                        	</xsl:call-template>
                         </xsl:for-each>
                         <xsl:for-each select="scale">
                                 <mods:subject>
@@ -150,15 +150,11 @@
                 </xsl:if>
 
                 <xsl:if test="count(creator) &gt; 0">
-                        <xsl:for-each select="creator">
-                                <mods:name>
-                                        <mods:namePart>
-                                                <xsl:value-of select="." />
-                                        </mods:namePart>
-                                        <mods:role>
-                                                <mods:roleTerm type="text">creator</mods:roleTerm>
-                                        </mods:role>
-                                </mods:name>
+                	<xsl:for-each select="creator">
+                        	<xsl:call-template name="split_semicolon">
+                        		<xsl:with-param name="text" select="."/>
+					<xsl:with-param name="parent" select=".."/>
+                       		</xsl:call-template>
                         </xsl:for-each>
                 </xsl:if>
 
@@ -221,9 +217,12 @@
                 </xsl:if>
 
                 <xsl:if test="count(genre) &gt; 0">
-                        <mods:genre>
-                                <xsl:value-of select="genre" />
-                        </mods:genre>
+                	<xsl:for-each select="genre">
+                		<xsl:call-template name="split_semicolon">
+                			<xsl:with-param name="text" select="."/>
+					<xsl:with-param name="parent" select=".."/>
+                		</xsl:call-template>              
+                	</xsl:for-each>
                 </xsl:if>
 
                 <xsl:if test="count(identifier) &gt; 0">
@@ -311,23 +310,47 @@
         </mods:mods>
         </xsl:template>
 
-        <!-- when ";", this means a new subject/topic.  when contains double dash, split into new /topic nodes. -->
-        <xsl:template match="text/text()" name="split_subjects">
+        <!-- When node text contains a ";", this means a newline is desired. Loops template to replace 
+        semicolons with substring node. For subject fields passes through second filter for strings 
+        containing a double dash and splits the text string into new topic nodes. -->
+        <xsl:template match="text/text()" name="split_semicolon">
                 <xsl:param name="text" select="."/>
                 <xsl:param name="separator" select="';'"/>
+		<xsl:param name="parent" select=".."/>
                 <xsl:choose>
-                        <xsl:when test="not(contains($text, $separator))">
-                                <mods:subject>
-                                        <xsl:call-template name="split_topics">
-                                                <xsl:with-param name="text" select="normalize-space($text)"/>
-                                        </xsl:call-template>
-                                </mods:subject>
+                	<xsl:when test="not(contains($text, $separator))">
+				<!-- Once text is split, build the data block for output -->
+                        	<!-- <xsl:choose>
+					<xsl:when test="$parent = 'creator'">
+						<mods:name>
+                                			<mods:namePart>
+                                  				<xsl:value-of select="normalize-space($text)"/>
+                                			</mods:namePart>
+                                			<mods:role>
+                                  				<mods:roleTerm type="text">creator</mods:roleTerm>
+                                			</mods:role>
+                              			</mods:name>
+                            		</xsl:when>
+			    		<xsl:when test="$parent = 'genre'"> -->
+			      			<mods:genre>
+							<xsl:value-of select="normalize-space($text)"/>
+			      			</mods:genre>
+			    	<!--	</xsl:when>
+			    		<xsl:when test="$parent = 'subject'">
+						<mods:subject>
+                                			<xsl:call-template name="split_topics">
+                                        			<xsl:with-param name="text" select="normalize-space($text)"/>
+                                			</xsl:call-template>
+                        			</mods:subject>
+					</xsl:when>
+					<xsl:otherwise/>
+				</xsl:choose> -->
                         </xsl:when>
                         <xsl:otherwise>
-                                <xsl:call-template name="split_subjects">
+                                <xsl:call-template name="split_semicolon">
                                         <xsl:with-param name="text" select="normalize-space(substring-before($text, $separator))"/>
                                 </xsl:call-template>
-                                <xsl:call-template name="split_subjects">
+                                <xsl:call-template name="split_semicolon">
                                         <xsl:with-param name="text" select="normalize-space(substring-after($text, $separator))"/>
                                 </xsl:call-template>
                         </xsl:otherwise>
@@ -340,14 +363,12 @@
                 <xsl:param name="separator" select="'--'"/>
                 <xsl:choose>
                         <xsl:when test="not(contains($text, $separator))">
-                                <mods:topic>
-                                        <xsl:value-of select="normalize-space($text)"/>
-                                </mods:topic>
+                            <xsl:value-of select="normalize-space($text)"/>
                         </xsl:when>
                         <xsl:otherwise>
-                                <mods:topic>
+                                <xsl:call-template name="split_semicolon">
                                     <xsl:value-of select="normalize-space(substring-before($text, $separator))"/>
-                                </mods:topic>
+                                </xsl:call-template>
                                 <xsl:call-template name="split_topics">
                                         <xsl:with-param name="text" select="substring-after($text, $separator)"/>
                                 </xsl:call-template>
