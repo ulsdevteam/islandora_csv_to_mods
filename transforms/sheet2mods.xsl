@@ -150,16 +150,11 @@
                 </xsl:if>
 
                 <xsl:if test="count(creator) &gt; 0">
-                        <xsl:for-each select="creator">
-                                <mods:name>
-                                        <mods:namePart>
-                                                <xsl:value-of select="." />
-                                        </mods:namePart>
-                                        <mods:role>
-                                                <mods:roleTerm type="text">creator</mods:roleTerm>
-                                        </mods:role>
-                                </mods:name>
-                        </xsl:for-each>
+			<xsl:for-each select="creator">
+                        	<xsl:call-template name="split_creator">
+                        		<xsl:with-param name="text" select="."/>
+                        	</xsl:call-template>
+			</xsl:for-each>
                 </xsl:if>
 
                 <xsl:if test="count(depositor) &gt; 0">
@@ -221,9 +216,11 @@
                 </xsl:if>
 
                 <xsl:if test="count(genre) &gt; 0">
-                        <mods:genre>
-                                <xsl:value-of select="genre" />
-                        </mods:genre>
+                	<xsl:for-each select="genre">
+                    		<xsl:call-template name="split_genre">
+                      			<xsl:with-param name="text" select="."/>
+                    		</xsl:call-template>                            
+                  	</xsl:for-each>
                 </xsl:if>
 
                 <xsl:if test="count(identifier) &gt; 0">
@@ -309,6 +306,58 @@
                 </xsl:if>
 
         </mods:mods>
+        </xsl:template>
+
+	<!-- when ";", this means a new creator -->
+        <xsl:template match="text/text()" name="split_creator">
+                <xsl:param name="text" select="."/>
+                <xsl:param name="separator" select="';'"/>
+                <xsl:choose>
+                        <xsl:when test="not(contains($text, $separator))">
+                        	<mods:name>
+                        		<mods:namePart>
+                        			<xsl:value-of select="normalize-space($text)"/>
+                        		</mods:namePart>
+                        		<mods:role>
+                        			<mods:roleTerm type="text">creator</mods:roleTerm>
+                        		</mods:role>
+                        	</mods:name>
+                        </xsl:when>
+                        <xsl:otherwise>
+                                <mods:name>
+                                        <mods:namePart>
+                                                <xsl:value-of select="normalize-space(substring-before($text, $separator))"/>
+                                        </mods:namePart>
+                                        <mods:role>
+                                                <mods:roleTerm type="text">creator</mods:roleTerm>
+                                        </mods:role>
+                                </mods:name>
+                                <xsl:call-template name="split_creator">
+                                        <xsl:with-param name="text" select="substring-after($text, $separator)"/>
+                                </xsl:call-template>
+                        </xsl:otherwise>
+                </xsl:choose>
+        </xsl:template>
+
+	<!-- when ";", this means a new genre-->
+        <xsl:template match="text/text()" name="split_genre">
+                <xsl:param name="text" select="."/>
+                <xsl:param name="separator" select="';'"/>
+                <xsl:choose>
+                        <xsl:when test="not(contains($text, $separator))">
+                        	<mods:genre>
+                  			<xsl:value-of select="normalize-space($text)"/>
+                		</mods:genre>
+                        </xsl:when>
+                        <xsl:otherwise>
+				<mods:genre>
+                                	<xsl:value-of select="normalize-space(substring-before($text, $separator))"/>
+				</mods:genre>
+                                <xsl:call-template name="split_genre">
+                                        <xsl:with-param name="text" select="substring-after($text, $separator)"/>
+                                </xsl:call-template>
+                        </xsl:otherwise>
+                </xsl:choose>
         </xsl:template>
 
         <!-- when ";", this means a new subject/topic.  when contains double dash, split into new /topic nodes. -->
