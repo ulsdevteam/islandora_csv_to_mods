@@ -62,7 +62,10 @@ function islandora_csv_to_mods_import_csv_pickfile($form, &$form_state) {
   $extensions = array('csv');
 
   $form['importform'] = array(
-    'form_description' => array('#markup' => $markup_import),
+    'form_description' => array(
+      '#type' => 'item',
+      '#markup' => $markup_import,
+    ),
     'file' => array(
       '#type' => 'file',
       '#title' => t('File'),
@@ -194,7 +197,6 @@ function islandora_csv_to_mods_review_import_csv_file(array $form, array &$form_
 function islandora_csv_to_mods_import_csv_form_submit(array $form, array &$form_state) {
   $form_state['multistep_values'][$form_state['stage']] = $form_state['values'];
   $form_state['new_stage'] = islandora_csv_to_mods_move_to_next_stage($form, $form_state);
-
   if ($form_state['triggering_element']['#value'] == 'Finish') {
     if (isset($form['uploaded_file_name']) && isset($form['uploaded_file_name']['#value']) && file_exists($form['uploaded_file_name']['#value'])) {
       unlink($form['uploaded_file_name']['#value']);
@@ -275,7 +277,7 @@ function islandora_csv_to_mods_analyze_uploaded_csv($filename, $make_mods) {
     $markup .= "<b>Validation of the CSV file failed.</b>";
   }
 
-  $csv_file_arr = islandora_csv_to_mods_csv_file_as_array($filename);
+  $csv_file_arr = islandora_csv_to_mods_csv_file_as_array($filename, true);
   $file_header = (isset($csv_file_arr['header']) ? $csv_file_arr['header'] : array());
   $file_rows = array();
 
@@ -395,6 +397,17 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
   $markup = '';
   ini_set('auto_detect_line_endings', TRUE);
 
+  $schema_test_text_xml = variable_get('islandora_csv_to_mods_schema_test_text_xml', TRUE);
+  $mods_schema_version = ($schema_test_text_xml) ?
+      variable_get('islandora_csv_to_mods_mods_schema_xsd_version', 'MODS 3.7') : '';
+  if ($mods_schema_version) {
+    $mods_schema_versions = islandora_csv_to_mods_get_mods_schema_versions();
+    $mods_schema_uri = array_search($mods_schema_version, $mods_schema_versions);
+  }
+  else {
+    $mods_schema_uri = '';
+  }
+
   // The previous_dir is needed for when done.
   $previous_dir = getcwd();
 
@@ -440,7 +453,7 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
       $identifier = '';
 
       foreach ($row as $i => $v) {
-        $row[$i] = htmlspecialchars(trim($v), ENT_QUOTES);
+        $row[$i] = htmlspecialchars(trim($v), ENT_NOQUOTES);
       }
 
       $rowcopy = $row;
@@ -549,6 +562,12 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
 
       // Transform the simple "sheet" xml into MODS.
       $filename = islandora_csv_to_mods_XMLtoMODS($working_directory . '/' . $output_filename, $identifier);
+      if ((!$schema_test_text_xml) || ($schema_test_text_xml && islandora_csv_to_mods_mods_schema_success($filename, $mods_schema_uri))) {
+        // Either no schema testing, or passed validation -- so do nothing.
+      }
+      else {
+        drupal_set_message(t('@object_pid failed a schema test.'), array('@object_pid' => check_plain($pid)), 'error');
+      }
       $mods_xml = file_get_contents($filename);
       $mods_xmls[] = $mods_xml;
       $markup .= "<blockquote><pre>" . htmlspecialchars($mods_xml) . "</pre></blockquote>";
@@ -575,6 +594,7 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
   // Delete the working directory because it is all in the Zip archive now.
   $rm_command = 'rm -rf ' . $working_directory;
   $output = array();
+
   exec($rm_command, $output, $return);
   if ($return) {
     drupal_set_message(t("There was a problem removing the temporary files at @working_directory."), array('@working_directory' => check_plain($working_directory)), "warning");
@@ -616,6 +636,7 @@ function islandora_csv_to_mods_update_objects($row_index, $base64_temp_csv_filen
     // that exist.
     if ($results = islandora_csv_to_mods_prepare_csv2mods($tmp_csv_filename)) {
       if (isset($results['mods_file']) && count($results['mods_file']) > 0) {
+        $affected_PIDS = array();
         foreach ($results['mods_file'] as $idx => $mods_xml) {
           // Adjust the $idx since the csv starts counting at 1, not at 0.
           $this_mods_row_index = $idx + 1;
@@ -624,7 +645,13 @@ function islandora_csv_to_mods_update_objects($row_index, $base64_temp_csv_filen
           // Load this Islandora object.
           $islandora_object = islandora_object_load($object_pid);
           if (is_object($islandora_object)) {
-            if (isset($islandora_object['MODS'])) {
+            // Get the set of datastream ID values for each object so we know whether or not
+            // this MODS represents a new datastream for the underlying object.
+            $datastreams = array();
+            foreach ($islandora_object as $islandora_object_datastream) {
+              $datastreams[] = strtoupper($islandora_object_datastream->id);
+            }
+            if (!(array_search('MODS', $datastreams) === FALSE)) {
               $datastream = $islandora_object['MODS'];
             }
             else {
@@ -632,12 +659,20 @@ function islandora_csv_to_mods_update_objects($row_index, $base64_temp_csv_filen
             }
             $datastream->setContentFromString($mods_xml);
             $islandora_object->ingestDatastream($datastream);
-            drupal_set_message(t('The object MODS has been updated for @object_pid'), array('@object_pid' => check_plain($object_pid)), 'info');
+            $affected_PIDS[] = $object_pid;
+            drupal_set_message(t('The object MODS has been updated for @object_pid', array('@object_pid' => check_plain($object_pid))), 'info');
           }
           else {
             drupal_set_message(t('The object identified by @object_pid did not exist.'), array('@object_pid' => check_plain($object_pid)), 'error');
           }
         }
+      }
+      if (count($affected_PIDS) > 0) {
+        drupal_set_message(t('Updated ALL Objects\' MODS for the following objects:<br><ul><li>' .
+          implode("</li><li>", $affected_PIDS) . '</li></ul>'), 'status');
+      }
+      else {
+        islandora_csv_to_mods_derive_new_dc($affected_PIDS);
       }
     }
   }
