@@ -134,7 +134,7 @@ function islandora_csv_to_mods_csv_file_as_array($csv_file, $display_rowcount = 
           $row++;
           if ($row > 1) {
             foreach ($data as $i => $v) {
-              $data[$i] = htmlspecialchars(trim($v), ENT_QUOTES);
+              $data[$i] = htmlspecialchars(trim($v), ENT_NOQUOTES, "UTF-8");
             }
             $file_rows[] = $data;
           }

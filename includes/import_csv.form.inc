@@ -453,7 +453,7 @@ function islandora_csv_to_mods_prepare_csv2mods($input_filename, $specific_row =
       $identifier = '';
 
       foreach ($row as $i => $v) {
-        $row[$i] = htmlspecialchars(trim($v), ENT_QUOTES);
+        $row[$i] = htmlspecialchars(trim($v), ENT_NOQUOTES);
       }
 
       $rowcopy = $row;
