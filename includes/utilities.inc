@@ -307,6 +307,7 @@ function islandora_csv_to_mods_get_csv_header_xpath_mappings() {
     'publication_status'        => '/mods:mods/mods:accessCondition/copyrightMD:copyright/@publication.status',
     'rights_holder'             => '/mods:mods/mods:accessCondition/copyrightMD:copyright/copyrightMD:rights.holder/copyrightMD:name',
     'genre'                     => '/mods:mods/mods:genre',
+    'genre_aat'			=> '/mods:mods/mods:genre[@authority="aat"]',
     'identifier'                => '/mods:mods/mods:identifier[@type="pitt"]',
     'source_id'                 => '/mods:mods/mods:identifier[@type="source"]',
     'source_identifier'         => '/mods:mods/mods:identifier[@type="source"]',
