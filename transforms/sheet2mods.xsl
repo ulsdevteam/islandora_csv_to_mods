@@ -56,6 +56,16 @@
                         </xsl:for-each>
                 </xsl:if>
 
+		<!-- MODS:GENRE_AAT -->
+
+                <xsl:if test="count(genre_aat) &gt; 0">
+                        <xsl:for-each select="genre_aat">
+                                <xsl:call-template name="split_genre_aat">
+                                        <xsl:with-param name="text" select="."/>
+                                </xsl:call-template>
+                        </xsl:for-each>
+                </xsl:if>
+
                 <!-- MODS:IDENTIFIER -->
 
                 <xsl:if test="count(identifier) &gt; 0">
@@ -396,6 +406,28 @@
                                         <xsl:with-param name="text" select="normalize-space(substring-before($text, $separator))"/>
                                 </xsl:call-template>
                                 <xsl:call-template name="split_genre">
+                                        <xsl:with-param name="text" select="normalize-space(substring-after($text, $separator))"/>
+                                </xsl:call-template>
+                        </xsl:otherwise>
+                </xsl:choose>
+        </xsl:template>
+
+	<!-- GENRE AAT -->
+
+        <xsl:template match="text/text()" name="split_genre_aat">
+                <xsl:param name="text" select="."/>
+                <xsl:param name="separator" select="';'"/>
+                <xsl:choose>
+                        <xsl:when test="not(contains($text, $separator))">
+                                <mods:genre authority="aat">
+                                        <xsl:value-of select="normalize-space($text)"/>
+                                </mods:genre>
+                        </xsl:when>
+                        <xsl:otherwise>
+                                <xsl:call-template name="split_genre_aat">
+                                        <xsl:with-param name="text" select="normalize-space(substring-before($text, $separator))"/>
+                                </xsl:call-template>
+                                <xsl:call-template name="split_genre_aat">
                                         <xsl:with-param name="text" select="normalize-space(substring-after($text, $separator))"/>
                                 </xsl:call-template>
                         </xsl:otherwise>
